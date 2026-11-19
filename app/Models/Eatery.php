@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Eatery extends Model
 {
+    /** @use HasFactory<\Database\Factories\EateryFactory> */
+    use HasFactory;
+    
     protected $fillable = ['district_id', 'name', 'slug', 'address', 'price_range', 'specialty', 'is_open'];
 
     protected $casts = [

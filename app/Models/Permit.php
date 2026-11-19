@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permit extends Model
 {
+    /** @use HasFactory<\Database\Factories\PermitFactory> */
+    use HasFactory;
     protected $fillable = ['eatery_id', 'permit_no', 'expires_on'];
 
     protected $casts = [
