@@ -2,23 +2,20 @@
 
 namespace Database\Factories;
 
-use App\Models\Permit;
+use App\Models\Eatery;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Permit>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Permit>
  */
 class PermitFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'eatery_id'  => Eatery::factory(),
+            'permit_no'  => 'DVO-' . fake()->numberBetween(2024, 2027) . '-' . fake()->unique()->numerify('#####'),
+            'expires_on' => fake()->dateTimeBetween('-6 months', '+2 years')->format('Y-m-d'),
         ];
     }
 }
