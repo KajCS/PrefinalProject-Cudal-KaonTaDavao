@@ -28,7 +28,7 @@ class EaterySeeder extends Seeder
         ]);
 
         $mine->permit()->create([
-            'permit_no'  => 'DVO-2026-MMDD-0324',
+            'permit_no'  => 'DVO-2026-0324',
             'expires_on' => '2027-03-24',
         ]);
 

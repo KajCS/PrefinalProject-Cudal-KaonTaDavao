@@ -25,14 +25,14 @@ class ReviewSeeder extends Seeder
 
         $mine->reviews()->create([
             'user_id' => $me->id,
-            'rating'  => 4,
-            'body'    => 'Write your own short review here.',
+            'rating' => 4,
+            'body' => 'Sakto ra ang presyo, Medyo taas lang ang pila tuplanan.',
         ]);
 
         $mine->reviews()->create([
             'user_id' => $users->random()->id,
-            'rating'  => 5,
-            'body'    => 'Write another short review here.',
+            'rating' => 5,
+            'body' => 'Best kinilaw in ztown! lami ey sa tuna ug sakto ang aslom.',
         ]);
 
         // 0-6 reviews on each open factory eatery, none on closed ones
