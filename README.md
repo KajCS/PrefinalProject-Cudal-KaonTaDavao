@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kaon Ta! Davao – Carinderia & Eatery Guide
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Name:** Ken Andrew Cudal
+**Course:** 4-334 · CS Elective 2 Full-Stack Development (Laravel)
+**Project:** Prefinal Milestone Project (Laravel 12, SQLite)
 
-## About Laravel
+A guide for the Davao City Tourism Office that lists carinderias and eateries by district, with each eatery's business permit, dishes, features, and reviews from residents.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate:fresh --seed
+npm install
+npm run build        # or npm run dev while developing
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+On Windows PowerShell, use `copy .env.example .env` and `New-Item database/database.sqlite` in place of `cp` and `touch`.
 
-## Contributing
+## Personalized Data
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Item | Value |
+|---|---|
+| Site title | Kaon Ta! Davao – Cudal's Food Guide |
+| Districts | Poblacion, Talomo, Agdao, Buhangin, Toril, Calinan |
+| Features | Suki ni Cudal, Budget Meal, Halal, Open 24 Hours, Aircon, Free Wi-Fi |
+| User 1 | FIRSTNAME Cudal – cudal@kaonta.test (password: kaonta2026) |
+| User 2 | Tita Cudal – tita.cudal@kaonta.test (password: kaonta2026) |
+| My eatery | Carinderia ni Cudal (slug: carinderia-ni-cudal), Poblacion, San Pedro St., Poblacion, Davao City, budget, specialty Tinolang Manok |
+| My eatery's features | Suki ni Cudal, Budget Meal |
+| My eatery's dishes | Tinolang Manok ₱85.00 (bestseller), Kinilaw na Tuna ₱120.00, Durian Shake ₱75.00 |
+| Permit | DVO-2026-MMDD, expires 2027-MM-DD |
 
-## Code of Conduct
+## Relationships
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Relationship | Type | Why this type fits |
+|---|---|---|
+| District → Eatery | hasMany / belongsTo | One district has many eateries, but each eatery is in only one district, so `eateries` stores `district_id`. |
+| Eatery → Dish | hasMany / belongsTo | An eatery serves many dishes, and each dish belongs to one eatery through `eatery_id`. |
+| Eatery → Review | hasMany / belongsTo | An eatery can get many reviews, and each review is about one eatery. |
+| User → Review | hasMany / belongsTo | A user can write many reviews, and each review has one writer through `user_id`. |
+| Eatery → Permit | hasOne / belongsTo | Each eatery has exactly one permit; `eatery_id` in `permits` is unique so a second permit can't be added. |
+| Eatery ↔ Feature | belongsToMany / belongsToMany | An eatery has many features and a feature is shared by many eateries, so the links are stored in the `eatery_feature` pivot table. |
+| District → Review (through Eatery) | hasManyThrough | Reviews don't have a `district_id`, so the district reaches its reviews by going through its eateries. |
 
-## Security Vulnerabilities
+## Routes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Output of `php artisan route:list --except-vendor`:
 
-## License
+```
+  GET|HEAD    / ................................................ home › HomeController
+  GET|HEAD    districts ............................. districts.index › DistrictController@index
+  GET|HEAD    districts/{district} ................... districts.show › DistrictController@show
+  GET|HEAD    eateries ................................ eateries.index › EateryController@index
+  POST        eateries ................................ eateries.store › EateryController@store
+  GET|HEAD    eateries/create ....................... eateries.create › EateryController@create
+  GET|HEAD    eateries/{eatery} ........................ eateries.show › EateryController@show
+  PUT|PATCH   eateries/{eatery} .................... eateries.update › EateryController@update
+  DELETE      eateries/{eatery} .................. eateries.destroy › EateryController@destroy
+  GET|HEAD    eateries/{eatery}/edit ................... eateries.edit › EateryController@edit
+  POST        eateries/{eatery}/reviews ..... eateries.reviews.store › ReviewController@store
+  GET|HEAD    reviewers/{user} ..................... reviewers.show › ReviewerController@show
+  DELETE      reviews/{review} .................. reviews.destroy › ReviewController@destroy
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+                                                                          Showing [13] routes
+```
+
+## Screenshots
+
+### Eatery list
+![Eatery list](screenshots/eatery-list.png)
+
+### Eatery page with reviews
+![Eatery page](screenshots/eatery-page.png)
+
+### Create form with validation errors
+![Create form errors](screenshots/create-errors.png)
